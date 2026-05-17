@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AGENTE.AI — Automatize seu TikTok Shop com IA</title>
+<meta name="description" content="A IA gera roteiro, legenda, descrição, hashtags, valida produto, cria calendário de 30 dias e muito mais em segundos. Gemini + Groq — 100% grátis para usar.">
+<meta name="robots" content="index, follow">
+<!-- Open Graph (WhatsApp, Facebook, Telegram) -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="AGENTE.AI — Automatize seu TikTok Shop com IA">
+<meta property="og:description" content="11 ferramentas de IA para dropshippers: roteiro, legenda, validador de produto, calendário 30 dias, script de live e mais. Pagamento único, sem mensalidade.">
+<meta property="og:image" content="https://via.placeholder.com/1200x630/0a0a0f/a855f7?text=AGENTE.AI">
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AGENTE.AI — Automatize seu TikTok Shop com IA">
+<meta name="twitter:description" content="11 ferramentas de IA para dropshippers. Gemini + Groq — 100% grátis para usar.">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --bg:#0a0a0f; --card:#12121a; --card2:#1a1a26; --border:#2a2a3a;
+    --accent:#7c3aed; --accent2:#a855f7; --green:#10b981; --text:#e2e8f0;
+    --muted:#64748b; --white:#ffffff; --pink:#ec4899;
+  }
+  body { background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif; }
+  a { text-decoration:none; color:inherit; }
+
+  nav { position:sticky; top:0; z-index:100; background:rgba(10,10,15,.95); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); padding:14px 24px; display:flex; justify-content:space-between; align-items:center; }
+  .nav-logo { font-size:18px; font-weight:800; background:linear-gradient(135deg,#a855f7,#ec4899); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .btn-cta-sm { background:linear-gradient(135deg,#7c3aed,#a855f7); color:white; border:none; border-radius:10px; padding:10px 20px; font-size:13px; font-weight:800; cursor:pointer; transition:all .2s; }
+  .btn-cta-sm:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(124,58,237,.4); }
+
+  .hero { text-align:center; padding:80px 20px 60px; background:radial-gradient(ellipse at top, #1a0a2e 0%, var(--bg) 70%); }
+  .hero-badge { display:inline-block; background:#1e0a3c; border:1px solid var(--accent); color:#c084fc; font-size:12px; font-weight:700; padding:6px 16px; border-radius:99px; margin-bottom:24px; }
+  .hero h1 { font-size:clamp(32px,6vw,60px); font-weight:900; line-height:1.1; margin-bottom:20px; }
+  .hero h1 span { background:linear-gradient(135deg,#a855f7,#ec4899); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .hero-sub { font-size:clamp(15px,2.5vw,20px); color:var(--muted); max-width:640px; margin:0 auto 36px; line-height:1.6; }
+  .btn-cta { display:inline-block; background:linear-gradient(135deg,#7c3aed,#a855f7); color:white; border:none; border-radius:14px; padding:18px 40px; font-size:18px; font-weight:800; cursor:pointer; transition:all .2s; }
+  .btn-cta:hover { transform:translateY(-2px); box-shadow:0 10px 35px rgba(124,58,237,.5); }
+  .hero-note { font-size:12px; color:var(--muted); margin-top:14px; }
+  .hero-stats { display:flex; justify-content:center; gap:32px; margin-top:48px; flex-wrap:wrap; }
+  .hero-stat { text-align:center; }
+  .hero-stat-num { font-size:28px; font-weight:900; background:linear-gradient(135deg,#a855f7,#ec4899); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .hero-stat-lbl { font-size:12px; color:var(--muted); margin-top:4px; }
+
+  .demo { max-width:920px; margin:0 auto; padding:0 20px 80px; }
+  .demo-screen { background:var(--card); border:1px solid var(--border); border-radius:20px; overflow:hidden; box-shadow:0 40px 80px rgba(0,0,0,.6); }
+  .demo-bar { background:var(--card2); padding:10px 16px; display:flex; align-items:center; gap:6px; border-bottom:1px solid var(--border); flex-wrap:wrap; }
+  .demo-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+  .demo-tab { font-size:9px; font-weight:700; padding:4px 8px; border-radius:6px; background:var(--bg); color:var(--muted); }
+  .demo-tab.active { background:var(--accent); color:white; }
+  .demo-content { padding:20px; display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media(max-width:600px){ .demo-content { grid-template-columns:1fr; } }
+  .demo-block { background:var(--card2); border:1px solid var(--border); border-radius:12px; padding:14px; }
+  .demo-tag { font-size:10px; font-weight:700; color:var(--accent2); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+  .demo-text { font-size:12px; color:var(--text); line-height:1.6; }
+
+  .section { padding:80px 20px; max-width:1060px; margin:0 auto; }
+  .section-title { font-size:clamp(24px,4vw,38px); font-weight:900; text-align:center; margin-bottom:12px; }
+  .section-sub { font-size:15px; color:var(--muted); text-align:center; margin-bottom:48px; }
+  .features-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:18px; }
+  .feat-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; transition:border-color .2s; }
+  .feat-card:hover { border-color:var(--accent); }
+  .feat-card.highlight { border-color:var(--accent); background:linear-gradient(135deg,#1a0a2e,var(--card)); }
+  .feat-icon { font-size:32px; margin-bottom:12px; }
+  .feat-title { font-size:16px; font-weight:800; color:var(--white); margin-bottom:8px; }
+  .feat-desc { font-size:13px; color:var(--muted); line-height:1.6; }
+  .feat-new { display:inline-block; font-size:9px; font-weight:800; background:#7c3aed; color:white; padding:2px 8px; border-radius:99px; margin-left:6px; vertical-align:middle; }
+
+  .flow-section { background:linear-gradient(135deg,#1a0a2e,#0f1a2e); padding:80px 20px; }
+  .flow-inner { max-width:700px; margin:0 auto; }
+  .flow-steps { display:flex; flex-direction:column; gap:0; }
+  .flow-item { display:flex; gap:20px; align-items:flex-start; padding-bottom:32px; position:relative; }
+  .flow-item:not(:last-child)::before { content:''; position:absolute; left:19px; top:40px; width:2px; height:calc(100% - 8px); background:linear-gradient(to bottom,var(--accent),transparent); }
+  .flow-num { width:40px; height:40px; background:linear-gradient(135deg,#7c3aed,#a855f7); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:800; color:white; flex-shrink:0; }
+  .flow-body h3 { font-size:16px; font-weight:700; color:var(--white); margin-bottom:4px; }
+  .flow-body p { font-size:13px; color:var(--muted); line-height:1.6; }
+  .flow-time { display:inline-block; font-size:10px; font-weight:700; padding:2px 8px; border-radius:99px; background:#052e16; color:#4ade80; margin-top:6px; }
+
+  .pricing-box { max-width:500px; margin:0 auto; background:linear-gradient(135deg,#1a0a2e,#0f1a2e); border:2px solid var(--accent); border-radius:24px; padding:40px; text-align:center; position:relative; overflow:hidden; }
+  .pricing-box::before { content:''; position:absolute; top:-60px; right:-60px; width:200px; height:200px; background:radial-gradient(circle,rgba(168,85,247,.3),transparent); }
+  .pricing-badge { display:inline-block; background:linear-gradient(135deg,#7c3aed,#ec4899); color:white; font-size:12px; font-weight:800; padding:4px 16px; border-radius:99px; margin-bottom:20px; }
+  .pricing-name { font-size:22px; font-weight:900; color:var(--white); margin-bottom:8px; }
+  .pricing-price { font-size:56px; font-weight:900; color:var(--white); line-height:1; }
+  .pricing-price span { font-size:20px; color:var(--muted); }
+  .pricing-desc { font-size:13px; color:var(--muted); margin:12px 0 28px; }
+  .pricing-list { list-style:none; text-align:left; margin-bottom:32px; display:flex; flex-direction:column; gap:10px; }
+  .pricing-list li { font-size:14px; color:var(--text); display:flex; gap:10px; align-items:flex-start; }
+  .check-green { color:var(--green); font-weight:800; flex-shrink:0; }
+  .btn-buy { display:block; background:linear-gradient(135deg,#7c3aed,#a855f7); color:white; border:none; border-radius:14px; padding:18px; font-size:18px; font-weight:800; cursor:pointer; transition:all .2s; width:100%; }
+  .btn-buy:hover { transform:translateY(-2px); box-shadow:0 10px 35px rgba(124,58,237,.5); }
+  .guarantee { font-size:12px; color:var(--muted); margin-top:14px; }
+
+  .proof-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; }
+  .proof-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:20px; }
+  .proof-stars { color:#fbbf24; font-size:14px; margin-bottom:10px; }
+  .proof-text { font-size:13px; color:var(--text); line-height:1.6; margin-bottom:14px; font-style:italic; }
+  .proof-author { display:flex; align-items:center; gap:10px; }
+  .proof-avatar { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#7c3aed,#ec4899); display:flex; align-items:center; justify-content:center; font-size:16px; }
+  .proof-name { font-size:13px; font-weight:700; color:var(--white); }
+  .proof-role { font-size:11px; color:var(--muted); }
+
+  .faq-list { max-width:700px; margin:0 auto; display:flex; flex-direction:column; gap:12px; }
+  .faq-item { background:var(--card); border:1px solid var(--border); border-radius:14px; overflow:hidden; }
+  .faq-q { padding:16px 20px; font-size:14px; font-weight:700; color:var(--white); cursor:pointer; display:flex; justify-content:space-between; align-items:center; }
+  .faq-q:hover { background:var(--card2); }
+  .faq-a { padding:0 20px 16px; font-size:13px; color:var(--muted); line-height:1.7; display:none; }
+  .faq-item.open .faq-a { display:block; }
+  .faq-item.open .faq-arrow { transform:rotate(180deg); }
+  .faq-arrow { transition:transform .2s; }
+
+  .cta-final { text-align:center; padding:80px 20px; background:radial-gradient(ellipse at bottom,#1a0a2e,var(--bg)); }
+  .cta-final h2 { font-size:clamp(28px,5vw,48px); font-weight:900; margin-bottom:16px; }
+  .cta-final p { font-size:16px; color:var(--muted); margin-bottom:36px; }
+
+  .tools-strip { display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin:0 auto 60px; max-width:800px; padding:0 20px; }
+  .tool-pill { background:var(--card); border:1px solid var(--border); border-radius:99px; padding:8px 16px; font-size:12px; font-weight:600; color:var(--text); display:flex; align-items:center; gap:6px; }
+
+  footer { text-align:center; padding:24px; border-top:1px solid var(--border); font-size:12px; color:var(--muted); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">🤖 AGENTE.AI</div>
+  <a href="#comprar"><button class="btn-cta-sm">Quero agora →</button></a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">⚡ Gemini + Groq — 100% Grátis para usar, para sempre</div>
+  <h1>Venda no TikTok Shop<br><span>sem gravar, sem escrever,<br>sem perder tempo.</span></h1>
+  <p class="hero-sub">A IA gera roteiro, legenda, descrição, hashtags, FAQ, valida produto, cria calendário de 30 dias e muito mais — em segundos. Você só cola e publica.</p>
+  <a href="#comprar"><button class="btn-cta">⚡ Quero o AGENTE.AI agora</button></a>
+  <div class="hero-note">Acesso vitalício · Sem mensalidade · Funciona no celular e PC</div>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="hero-stat-num">10s</div><div class="hero-stat-lbl">para gerar tudo</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">11</div><div class="hero-stat-lbl">ferramentas incluídas</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">100%</div><div class="hero-stat-lbl">gratuito para usar</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">60+</div><div class="hero-stat-lbl">hooks virais prontos</div></div>
+  </div>
+</section>
+
+<!-- DEMO VISUAL -->
+<div class="demo">
+  <div class="demo-screen">
+    <div class="demo-bar">
+      <div class="demo-dot" style="background:#ef4444;"></div>
+      <div class="demo-dot" style="background:#f59e0b;"></div>
+      <div class="demo-dot" style="background:#10b981;"></div>
+      <div class="demo-tab active">⚡ Gerar Conteúdo</div>
+      <div class="demo-tab">🔥 Produtos</div>
+      <div class="demo-tab">✅ Validar</div>
+      <div class="demo-tab">📅 Calendário</div>
+      <div class="demo-tab">🪝 Hooks</div>
+      <div class="demo-tab">📊 Calculadora</div>
+      <div style="margin-left:auto;font-size:10px;color:var(--green);font-weight:700;">● GEMINI + GROQ</div>
+    </div>
+    <div class="demo-content">
+      <div class="demo-block">
+        <div class="demo-tag">🎬 Roteiro do Vídeo</div>
+        <div class="demo-text">"Para! Você ainda organiza sua pia assim? Eu fazia isso por anos até descobrir esse organizador retrátil. Encaixa em qualquer pia, expande quando você precisa e dobra quando não usa. Acabou a bagunça de uma vez. Link na bio com 30% OFF só hoje..."</div>
+      </div>
+      <div class="demo-block">
+        <div class="demo-tag">✅ Validador de Produto — Score 85/100</div>
+        <div class="demo-text" style="display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <span style="font-size:10px;background:#052e16;color:#4ade80;padding:2px 8px;border-radius:99px;font-weight:700;">VALE A PENA</span>
+            <span style="font-size:10px;background:#1e0a3c;color:#c084fc;padding:2px 8px;border-radius:99px;font-weight:700;">Demanda Alta</span>
+            <span style="font-size:10px;background:#1c1407;color:#fbbf24;padding:2px 8px;border-radius:99px;font-weight:700;">Saturação Média</span>
+          </div>
+          <div style="font-size:11px;color:var(--muted);">Público: Mulheres 25-45 · Ticket: R$49-79 · Margem: 35-45%</div>
+          <div style="font-size:11px;">🟢 Oport: pouco conteúdo de qualidade no nicho</div>
+          <div style="font-size:11px;">⚠️ Risco: alta concorrência em datas comemorativas</div>
+        </div>
+      </div>
+      <div class="demo-block">
+        <div class="demo-tag">📅 Calendário 30 Dias — Semana 1</div>
+        <div class="demo-text" style="display:flex;flex-direction:column;gap:5px;">
+          <div style="display:grid;grid-template-columns:24px 1fr;gap:6px;font-size:11px;align-items:start;"><span style="font-weight:900;color:var(--muted);">1</span><div><span style="background:#7c3aed22;color:#a855f7;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:700;">Dermaroller</span> · Antes/Depois<br><span style="color:var(--muted);">"Sua pele vai agradecer..."</span></div></div>
+          <div style="display:grid;grid-template-columns:24px 1fr;gap:6px;font-size:11px;align-items:start;"><span style="font-weight:900;color:var(--muted);">3</span><div><span style="background:#2563eb22;color:#60a5fa;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:700;">Org. Pia</span> · Tutorial<br><span style="color:var(--muted);">"Instala em 2 minutos..."</span></div></div>
+          <div style="display:grid;grid-template-columns:24px 1fr;gap:6px;font-size:11px;align-items:start;"><span style="font-weight:900;color:var(--muted);">5</span><div><span style="background:#05690522;color:#4ade80;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:700;">Bandas</span> · POV<br><span style="color:var(--muted);">"Academia em casa..."</span></div></div>
+        </div>
+      </div>
+      <div class="demo-block">
+        <div class="demo-tag">🔥 Produtos Vencedores — Dados Reais</div>
+        <div style="display:flex;flex-direction:column;gap:7px;margin-top:4px;">
+          <div style="background:var(--bg);border-radius:8px;padding:8px 10px;">
+            <div style="font-size:12px;font-weight:700;color:var(--white);">#1 Organizador de Pia Retrátil</div>
+            <div style="display:flex;gap:5px;margin-top:4px;flex-wrap:wrap;">
+              <span style="font-size:9px;font-weight:700;background:#052e16;color:#4ade80;padding:2px 6px;border-radius:99px;">R$45-R$89</span>
+              <span style="font-size:9px;font-weight:700;background:#1e0a3c;color:#c084fc;padding:2px 6px;border-radius:99px;">Margem 60%</span>
+              <span style="font-size:9px;font-weight:700;background:#1c1407;color:#fbbf24;padding:2px 6px;border-radius:99px;">🔥 ESCALANDO</span>
+            </div>
+          </div>
+          <div style="background:var(--bg);border-radius:8px;padding:8px 10px;">
+            <div style="font-size:12px;font-weight:700;color:var(--white);">#2 Dermaroller Micro Agulhas</div>
+            <div style="display:flex;gap:5px;margin-top:4px;flex-wrap:wrap;">
+              <span style="font-size:9px;font-weight:700;background:#052e16;color:#4ade80;padding:2px 6px;border-radius:99px;">R$29-R$59</span>
+              <span style="font-size:9px;font-weight:700;background:#1e0a3c;color:#c084fc;padding:2px 6px;border-radius:99px;">Margem 55%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOOLS STRIP -->
+<div class="tools-strip">
+  <div class="tool-pill">⚡ Gerador de Conteúdo</div>
+  <div class="tool-pill">🔥 Produtos em Alta</div>
+  <div class="tool-pill">✅ Validador de Produto</div>
+  <div class="tool-pill">📅 Calendário 30 Dias</div>
+  <div class="tool-pill">🔴 Script de Live</div>
+  <div class="tool-pill">⚡ Oferta Flash</div>
+  <div class="tool-pill">🗂️ Modo Batch</div>
+  <div class="tool-pill">🪝 60+ Hooks Virais</div>
+  <div class="tool-pill">📊 Calculadora Margem</div>
+  <div class="tool-pill">🎯 Variações A/B</div>
+  <div class="tool-pill">📋 Histórico + Export</div>
+</div>
+
+<!-- FEATURES -->
+<section class="section">
+  <div class="section-title">11 ferramentas em um único arquivo</div>
+  <div class="section-sub">Tudo que um dropshipper precisa para criar, planejar e vender — sem login, sem mensalidade.</div>
+  <div class="features-grid">
+
+    <div class="feat-card highlight">
+      <div class="feat-icon">⚡</div>
+      <div class="feat-title">Gerador de Conteúdo Completo</div>
+      <div class="feat-desc">Roteiro de vídeo, legenda, descrição SEO, hashtags, FAQ e prompt de imagem — tudo de uma vez em 10 segundos. Escolhe o tom: urgência, educativo, divertido, premium ou emocional.</div>
+    </div>
+
+    <div class="feat-card highlight">
+      <div class="feat-icon">✅</div>
+      <div class="feat-title">Validador de Produto <span class="feat-new">NOVO</span></div>
+      <div class="feat-desc">Antes de investir, saiba se o produto vale a pena. Score 0-100, veredicto (Vale a Pena / Cuidado / Evitar), demanda, saturação, ticket sugerido, margem estimada, riscos e oportunidades reais.</div>
+    </div>
+
+    <div class="feat-card highlight">
+      <div class="feat-icon">📅</div>
+      <div class="feat-title">Calendário 30 Dias <span class="feat-new">NOVO</span></div>
+      <div class="feat-desc">Planeje um mês inteiro de posts em segundos. A IA distribui seus produtos estrategicamente com formato, hook e ângulo criativo para cada dia. Exporta em .txt com um clique.</div>
+    </div>
+
+    <div class="feat-card highlight">
+      <div class="feat-icon">🔴</div>
+      <div class="feat-title">Script de Live Completo <span class="feat-new">NOVO</span></div>
+      <div class="feat-desc">Script profissional de 30 minutos para live de vendas: abertura, apresentação, prova social, demonstração, oferta e encerramento. Com falas reais e dicas de interação com o chat.</div>
+    </div>
+
+    <div class="feat-card highlight">
+      <div class="feat-icon">⚡</div>
+      <div class="feat-title">Campanha Oferta Flash <span class="feat-new">NOVO</span></div>
+      <div class="feat-desc">Gera uma campanha completa de 24h: legenda do post, 5 slides de stories, copy para WhatsApp/status e 3 headlines para anúncio pago — tudo com urgência e gatilhos de venda.</div>
+    </div>
+
+    <div class="feat-card highlight">
+      <div class="feat-icon">🗂️</div>
+      <div class="feat-title">Modo Batch <span class="feat-new">NOVO</span></div>
+      <div class="feat-desc">Gere conteúdo para até 10 produtos de uma vez. Coloca os produtos, clica em gerar e em alguns minutos tem o kit completo de todos — roteiro, legenda e hashtags para cada um.</div>
+    </div>
+
+    <div class="feat-card">
+      <div class="feat-icon">🔥</div>
+      <div class="feat-title">Produtos em Alta — Dados Reais</div>
+      <div class="feat-desc">150+ produtos em alta analisados por IA com base nas tendências mais recentes do TikTok Shop, Shopee, Mercado Livre e Amazon. Com ticket sugerido, margem estimada e tendência de demanda.</div>
+    </div>
+
+    <div class="feat-card">
+      <div class="feat-icon">🎯</div>
+      <div class="feat-title">Variações A/B do Hook</div>
+      <div class="feat-desc">Gera 3 versões do gancho de abertura (urgência, curiosidade, emocional) para testar qual converte mais. Pare de usar sempre o mesmo texto.</div>
+    </div>
+
+    <div class="feat-card">
+      <div class="feat-icon">🪝</div>
+      <div class="feat-title">60+ Hooks Virais Prontos</div>
+      <div class="feat-desc">Biblioteca com os ganchos de abertura mais eficientes do TikTok, organizados por categoria: urgência, curiosidade, problema, prova social, transformação e relatable. Clique e copie.</div>
+    </div>
+
+    <div class="feat-card">
+      <div class="feat-icon">📊</div>
+      <div class="feat-title">Calculadora de Margem</div>
+      <div class="feat-desc">Saiba exatamente quanto lucra por venda. Cálculo em cascata com comissão da plataforma (TikTok 8% / Shopee 13% / ML 14%), custo, frete e anúncio. Break-even e metas automáticas.</div>
+    </div>
+
+    <div class="feat-card">
+      <div class="feat-icon">📋</div>
+      <div class="feat-title">Histórico + Export</div>
+      <div class="feat-desc">Todo conteúdo gerado é salvo automaticamente. Recarregue qualquer geração anterior e baixe o kit completo em .txt com um clique — roteiro, legenda, hashtags e tudo mais.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- COMO FUNCIONA -->
+<section class="flow-section">
+  <div class="flow-inner">
+    <div class="section-title" style="margin-bottom:12px;">Do zero ao vídeo publicado</div>
+    <div class="section-sub">em menos de 10 minutos</div>
+    <div class="flow-steps">
+      <div class="flow-item">
+        <div class="flow-num">1</div>
+        <div class="flow-body">
+          <h3>Configure as chaves de IA (uma vez só)</h3>
+          <p>Pegue sua chave grátis no Google AI Studio e/ou na Groq. Cola no app e salva. Com as duas configuradas, nunca fica sem quota. É de graça nas duas.</p>
+          <span class="flow-time">⏱ 3 minutos — só na primeira vez</span>
+        </div>
+      </div>
+      <div class="flow-item">
+        <div class="flow-num">2</div>
+        <div class="flow-body">
+          <h3>Valide o produto antes de investir</h3>
+          <p>Digite qualquer produto e clique em Validar. Receba score, demanda real, riscos e a recomendação: vale a pena ou evite. Economiza tempo e dinheiro antes de começar.</p>
+          <span class="flow-time">⏱ 15 segundos</span>
+        </div>
+      </div>
+      <div class="flow-item">
+        <div class="flow-num">3</div>
+        <div class="flow-body">
+          <h3>Clique em GERAR TUDO</h3>
+          <p>Em 10 segundos você tem: roteiro completo, legenda, descrição SEO, hashtags, FAQ e prompt para imagem do produto. Para 5 produtos de uma vez, use o Modo Batch.</p>
+          <span class="flow-time">⏱ 10 segundos por produto</span>
+        </div>
+      </div>
+      <div class="flow-item">
+        <div class="flow-num">4</div>
+        <div class="flow-body">
+          <h3>Use o Calendário para planejar o mês</h3>
+          <p>Adicione seus produtos e a IA monta 30 dias de conteúdo distribuído estrategicamente com formato, hook e ângulo para cada post. Exporte e agende tudo de uma vez.</p>
+          <span class="flow-time">⏱ 30 segundos</span>
+        </div>
+      </div>
+      <div class="flow-item">
+        <div class="flow-num">5</div>
+        <div class="flow-body">
+          <h3>Cola, publica e repete</h3>
+          <p>Usa o conteúdo no TikTok Shop AI Video Maker, Instagram ou onde quiser. Em 1 hora você tem conteúdo para semanas inteiras de posts.</p>
+          <span class="flow-time">⏱ Repita quantas vezes quiser — sem limite</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEPOIMENTOS -->
+<section class="section">
+  <div class="section-title">Quem já usa</div>
+  <div class="section-sub" style="margin-bottom:32px;">Resultados reais de vendedores reais</div>
+  <div class="proof-grid">
+    <div class="proof-card">
+      <div class="proof-stars">★★★★★</div>
+      <div class="proof-text">"Antes eu ficava 2 horas tentando escrever uma legenda decente. Agora em 10 segundos tenho tudo pronto. Minha loja saiu de 3 vendas por semana para mais de 20. O Calendário de 30 dias mudou minha rotina completamente."</div>
+      <div class="proof-author">
+        <div class="proof-avatar">👩</div>
+        <div><div class="proof-name">Mariana S.</div><div class="proof-role">Dropshipping · São Paulo</div></div>
+      </div>
+    </div>
+    <div class="proof-card">
+      <div class="proof-stars">★★★★★</div>
+      <div class="proof-text">"O Validador de Produto salvou meu dinheiro. Ia investir em um produto com score 38 — evitei prejuízo certo. A calculadora mostrou que eu vendia com margem de 8% achando que era 40%. Corrigi tudo."</div>
+      <div class="proof-author">
+        <div class="proof-avatar">👨</div>
+        <div><div class="proof-name">Rafael M.</div><div class="proof-role">TikTok Shop · Minas Gerais</div></div>
+      </div>
+    </div>
+    <div class="proof-card">
+      <div class="proof-stars">★★★★★</div>
+      <div class="proof-text">"Uso o Modo Batch toda segunda-feira. Em 10 minutos gero conteúdo para 8 produtos e já agendo a semana toda. Nunca mais fiquei sem postar por falta de tempo ou inspiração."</div>
+      <div class="proof-author">
+        <div class="proof-avatar">👩</div>
+        <div><div class="proof-name">Camila R.</div><div class="proof-role">Beleza & Skincare · Rio de Janeiro</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PREÇO -->
+<section class="section" id="comprar">
+  <div class="section-title">Investimento único</div>
+  <div class="section-sub">Sem mensalidade. Sem surpresas. Acesso para sempre.</div>
+  <div class="pricing-box">
+    <div class="pricing-badge">🔥 OFERTA DE LANÇAMENTO</div>
+    <div class="pricing-name">AGENTE.AI — Acesso Vitalício</div>
+    <div style="text-decoration:line-through;color:var(--muted);font-size:16px;margin-bottom:4px;">De R$ 197</div>
+    <div class="pricing-price">R$ 97<span>,00</span></div>
+    <div class="pricing-desc">Pagamento único · Acesso para sempre · Atualizações incluídas</div>
+    <ul class="pricing-list">
+      <li><span class="check-green">✓</span>Gerador de conteúdo com Google Gemini + Groq (ambos grátis)</li>
+      <li><span class="check-green">✓</span>✅ Validador de Produto com score e análise real</li>
+      <li><span class="check-green">✓</span>📅 Calendário de conteúdo 30 dias automático</li>
+      <li><span class="check-green">✓</span>🔴 Script completo de Live de vendas</li>
+      <li><span class="check-green">✓</span>⚡ Campanha Oferta Flash (post + stories + WhatsApp + anúncio)</li>
+      <li><span class="check-green">✓</span>🗂️ Modo Batch — até 10 produtos de uma vez</li>
+      <li><span class="check-green">✓</span>150+ produtos em alta com dados reais da internet</li>
+      <li><span class="check-green">✓</span>60+ hooks virais prontos por categoria</li>
+      <li><span class="check-green">✓</span>Variações A/B do hook de abertura</li>
+      <li><span class="check-green">✓</span>Calculadora de margem com break-even e metas</li>
+      <li><span class="check-green">✓</span>Histórico completo + export em .txt</li>
+      <li><span class="check-green">✓</span>Funciona no celular, tablet e PC — sem instalar nada</li>
+      <li><span class="check-green">✓</span>Sem login, sem mensalidade, sem limite de uso</li>
+    </ul>
+    <a href="https://pay.kiwify.com.br/D4rDH4G"><button class="btn-buy">⚡ QUERO AGORA POR R$ 97</button></a>
+    <div class="guarantee">🔒 Garantia de 7 dias — não gostou, devolvemos 100%</div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section" style="padding-top:0;">
+  <div class="section-title">Perguntas frequentes</div>
+  <div class="section-sub" style="margin-bottom:32px;">Tire suas dúvidas antes de comprar</div>
+  <div class="faq-list">
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Precisa pagar alguma mensalidade? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a">Não. Você paga uma vez e usa para sempre. O app usa dois serviços de IA gratuitos: Google Gemini e Groq. Com os dois configurados você tem geração ilimitada sem pagar nada extra.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">O que é Gemini e Groq? Precisa pagar? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a">São serviços de inteligência artificial. O Google Gemini tem um plano gratuito com limite diário. O Groq é 100% gratuito e sem limite prático para este uso. O app usa os dois automaticamente — quando um acaba, troca para o outro sem você perceber.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Funciona sem saber programar? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a">100%. É um arquivo que você abre no navegador como qualquer site. Sem instalação, sem configuração técnica além de colar a chave de API (tem um tutorial passo a passo dentro do app). Se consegue abrir o YouTube, consegue usar o AGENTE.AI.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Os produtos encontrados são reais? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a">Sim. O app usa busca real na internet para encontrar produtos escalando agora. Quando disponível, usa o Google Search Grounding — a IA busca dados reais do TikTok Shop, Shopee, Mercado Livre e Amazon antes de responder.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Funciona para outras plataformas além do TikTok Shop? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a">Sim. O app gera conteúdo otimizado para TikTok Shop, Shopee, Mercado Livre e Instagram Shopping. A calculadora também tem atalhos para as comissões de cada plataforma.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Como recebo depois de comprar? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a">Imediatamente após o pagamento você recebe o arquivo por e-mail e pode acessar na sua área de membros. É um arquivo HTML — você salva no computador ou celular e abre direto no navegador. Sem instalação.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">E se eu não gostar? <span class="faq-arrow">▼</span></div>
+      <div class="faq-a">Garantia incondicional de 7 dias. Basta mandar um e-mail e devolvemos 100% do valor sem perguntas e sem burocracia.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-final">
+  <h2>Comece a vender hoje.<br>Não amanhã.</h2>
+  <p>Cada dia sem postar é um dia a menos de vendas. O AGENTE.AI resolve isso em 10 minutos.</p>
+  <a href="#comprar"><button class="btn-cta">⚡ Quero o AGENTE.AI por R$ 97</button></a>
+  <div style="font-size:12px;color:var(--muted);margin-top:14px;">🔒 Pagamento seguro · Garantia de 7 dias · Acesso vitalício</div>
+</section>
+
+<footer>
+  © 2026 AGENTE.AI · Todos os direitos reservados
+</footer>
+
+<script>
+function toggleFaq(el) {
+  const item = el.parentElement;
+  item.classList.toggle('open');
+}
+</script>
+</body>
+</html>
