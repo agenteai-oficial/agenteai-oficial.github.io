@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-06-11T03:56:16.059Z",
+  "timestamp": "2026-06-11T04:11:16.065Z",
   "projectRoot": "/home/user/agenteai-oficial.github.io",
   "structure": {
     "hasPackageJson": false,
@@ -7,5 +7,5 @@
     "hasClaudeConfig": true,
     "hasClaudeFlow": true
   },
-  "scannedAt": 1781150176059
+  "scannedAt": 1781151076065
 }
