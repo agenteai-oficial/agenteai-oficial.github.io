@@ -13,11 +13,18 @@ ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 # Deixe vazio para só imprimir no terminal
 WEBHOOK_URL = os.getenv("WEBHOOK_URL", "")
 
-# Modo execução automática — False = só alertas, True = executa ordens
-AUTO_EXECUTE = False
+# Binance API — necessário apenas para execução de ordens
+BINANCE_API_KEY = os.getenv("BINANCE_API_KEY", "")
+BINANCE_API_SECRET = os.getenv("BINANCE_API_SECRET", "")
 
-# Confiança mínima do Council para emitir alerta (0-100)
+# Modo execução:
+#   "alert"   → só imprime/envia webhook (padrão seguro)
+#   "dry_run" → simula ordens sem executar (para testar)
+#   "live"    → executa ordens reais (requer chaves Binance)
+EXECUTION_MODE = os.getenv("EXECUTION_MODE", "alert")
+
+# Confiança mínima do Council para emitir alerta ou executar ordem (0-100)
 MIN_CONFIDENCE = 65
 
-# Tamanho máximo de posição (% do portfólio) — o Council respeita isso
+# Tamanho máximo de posição (% do portfólio) — o Council ajusta por confiança
 MAX_POSITION_PCT = 10
