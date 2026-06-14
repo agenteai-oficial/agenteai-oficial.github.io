@@ -14,14 +14,14 @@ def kelly_size(
     f* = (bp - q) / b
     """
     if yes_price <= 0 or yes_price >= 1:
-        return {"size_usdc": 0.0, "kelly_f": 0.0, "edge": 0.0, "reason": "preço inválido"}
+        return {"size_usdc": 0.0, "kelly_f": 0.0, "edge": 0.0, "expected_profit": 0.0, "reason": "preço inválido"}
 
     b = (1.0 - yes_price) / yes_price  # odds de retorno
     q = 1.0 - p                         # probabilidade de perder
     edge = p - yes_price                # edge: quanto melhor que o mercado
 
     if edge <= 0:
-        return {"size_usdc": 0.0, "kelly_f": 0.0, "edge": round(edge, 4), "reason": "sem edge"}
+        return {"size_usdc": 0.0, "kelly_f": 0.0, "edge": round(edge, 4), "expected_profit": 0.0, "reason": "sem edge"}
 
     kelly_f = (b * p - q) / b
     kelly_f = max(0.0, kelly_f)
