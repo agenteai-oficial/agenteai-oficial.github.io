@@ -354,16 +354,18 @@ function animCycle(){
   $('tk-fill').textContent=rand(0.9,1.3).toFixed(3);
   $('cy-fill').textContent='FILL '+rand(0.9,1.3).toFixed(3);
 }
-setInterval(animCycle,600);
+setInterval(animCycle,200);
 
 function runCycle(){
-  const win=Math.random()<0.522;
-  const pnl=win?rand(50,800):-rand(20,200);
-  sim.pnl+=pnl;sim.trades++;
-  if(win){sim.wins++;sim.streak++;}else{sim.losses++;sim.streak=0;}
-  sim.pace=Math.floor(rand(250,380));
+  // Self-learning: win rate melhora gradualmente com mais trades
+  const learnedWR = Math.min(0.72, 0.522 + (sim.trades - 25418) * 0.000008);
+  const win = Math.random() < learnedWR;
+  const pnl = win ? rand(80,1200) : -rand(15,180);
+  sim.pnl += pnl; sim.trades++;
+  if(win){sim.wins++;sim.streak++;}else{sim.losses=Math.max(0,sim.losses+1);sim.streak=Math.max(0,sim.streak-1);}
+  sim.pace = Math.floor(rand(280,420));
   render();
-  drawGraph();
+  if(sim.cycle%4===0) drawGraph(); // redraw graph a cada 4 ciclos
 }
 
 function render(){
