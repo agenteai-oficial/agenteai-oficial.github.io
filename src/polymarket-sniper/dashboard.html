@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CLAUDE × QUANT — Polymarket Sniper</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0f;--card:#111118;--card2:#16161f;--border:#1e1e2e;
+  --green:#00ff88;--red:#ff3366;--yellow:#ffcc00;--blue:#4488ff;
+  --purple:#a855f7;--cyan:#00ccff;--text:#c8d0e0;--muted:#4a5068;
+  --white:#ffffff;
+}
+body{background:var(--bg);color:var(--text);font-family:'Courier New',monospace;font-size:12px;overflow-x:hidden}
+
+/* TOP BAR */
+.topbar{background:#050508;border-bottom:1px solid var(--border);padding:8px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.bot-name{font-size:14px;font-weight:900;color:var(--white)}
+.bot-name span{color:var(--cyan)}
+.algo-tags{display:flex;gap:6px}
+.tag{background:var(--card2);border:1px solid var(--border);padding:2px 8px;border-radius:3px;font-size:10px;color:var(--muted)}
+.tag.active{border-color:var(--cyan);color:var(--cyan)}
+.time{margin-left:auto;color:var(--muted);font-size:11px}
+
+/* TICKER */
+.ticker{background:#060610;border-bottom:1px solid var(--border);padding:4px 16px;display:flex;gap:20px;overflow-x:auto;white-space:nowrap}
+.tick-item{display:flex;gap:6px;font-size:11px}
+.tick-up{color:var(--green)}
+.tick-dn{color:var(--red)}
+
+/* MAIN STATS */
+.stats-bar{display:flex;gap:1px;background:var(--border);border-bottom:1px solid var(--border)}
+.stat{background:var(--card);flex:1;padding:10px 14px;min-width:0}
+.stat-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.stat-value{font-size:20px;font-weight:900;color:var(--white);margin-top:2px}
+.stat-value.green{color:var(--green)}
+.stat-value.red{color:var(--red)}
+.stat-value.yellow{color:var(--yellow)}
+.stat-sub{font-size:9px;color:var(--muted);margin-top:1px}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);flex:1}
+.grid-3{grid-template-columns:2fr 1fr 1fr}
+.panel{background:var(--card);padding:12px}
+.panel-title{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* EXECUTION CYCLE */
+.cycle-bar{display:flex;gap:2px;margin-bottom:8px}
+.cycle-step{flex:1;padding:5px 4px;text-align:center;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border-radius:2px;background:var(--card2);color:var(--muted);border:1px solid var(--border);transition:all .3s}
+.cycle-step.active{background:var(--cyan);color:#000;border-color:var(--cyan)}
+.cycle-step.done{background:#1a2a1a;color:var(--green);border-color:var(--green)}
+
+/* FORCE GRAPH */
+#force-graph{width:100%;height:250px}
+
+/* ROBUSTNESS MATRIX */
+.matrix-table{width:100%;border-collapse:collapse}
+.matrix-table th,.matrix-table td{padding:3px 6px;text-align:center;font-size:10px}
+.matrix-table th{color:var(--muted);font-weight:400}
+.cell-pos{color:var(--green)}
+.cell-neg{color:var(--red)}
+.cell-neu{color:var(--muted)}
+
+/* MONTE CARLO */
+.mc-chart{height:80px;display:flex;align-items:flex-end;gap:1px;margin-top:6px}
+.mc-bar{flex:1;background:var(--blue);opacity:.7;min-height:2px;transition:height .5s}
+.mc-stats{display:flex;gap:12px;margin-top:6px;flex-wrap:wrap}
+.mc-stat{font-size:10px}
+.mc-stat span{color:var(--white)}
+
+/* TRADE LOG */
+.trade-log{max-height:200px;overflow-y:auto}
+.trade-row{display:grid;grid-template-columns:1fr 3fr 1fr 1fr 1fr;gap:4px;padding:3px 0;border-bottom:1px solid var(--border);font-size:10px}
+.trade-row:last-child{border-bottom:none}
+.side-yes{color:var(--green)}
+.side-no{color:var(--red)}
+
+/* POSITIONS */
+.positions{display:flex;flex-direction:column;gap:4px}
+.pos-row{background:var(--card2);border:1px solid var(--border);border-radius:4px;padding:6px 10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.pos-q{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}
+.pos-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:2px}
+.badge-bull{background:#0a2a0a;color:var(--green);border:1px solid var(--green)}
+.badge-bear{background:#2a0a0a;color:var(--red);border:1px solid var(--red)}
+.badge-neu{background:var(--card2);color:var(--muted);border:1px solid var(--border)}
+
+/* PNL DISPLAY */
+.pnl-big{font-size:42px;font-weight:900;color:var(--green);font-family:'Courier New',monospace}
+.pnl-big.neg{color:var(--red)}
+
+/* LIQ RISK */
+.risk-bar{height:6px;background:var(--card2);border-radius:3px;overflow:hidden;margin-top:4px}
+.risk-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--yellow),var(--red));border-radius:3px}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--card)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="bot-name">CLAUDE <span>×</span> QUANT</div>
+  <div class="algo-tags">
+    <div class="tag active">MARKOV</div>
+    <div class="tag active">KELLY</div>
+    <div class="tag active">SELF-LEARN</div>
+    <div class="tag" id="model-tag">claude-fable-5</div>
+  </div>
+  <div style="color:var(--muted);font-size:10px">BTC/ETH/SOL/BNB/XRP · 5M POLYMARKET AGENT</div>
+  <div class="time" id="clock"></div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker" id="ticker">
+  <div class="tick-item"><span style="color:var(--muted)">BTC ▲ 5M</span><span class="tick-up" id="btc-tick">--</span></div>
+  <div class="tick-item"><span style="color:var(--muted)">ETH ▲ 5M</span><span class="tick-up" id="eth-tick">--</span></div>
+  <div class="tick-item"><span style="color:var(--muted)">SOL ▲ 5M</span><span class="tick-up" id="sol-tick">--</span></div>
+  <div class="tick-item"><span style="color:var(--muted)">CYCLE</span><span style="color:var(--cyan)" id="cycle-tick">--</span></div>
+</div>
+
+<!-- MAIN STATS -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-label">All-Time P&L</div>
+    <div class="pnl-big" id="pnl-big">$0.00</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">Trades</div>
+    <div class="stat-value" id="stat-trades">0</div>
+    <div class="stat-sub" id="stat-wr">W:0 L:0</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">Win Rate</div>
+    <div class="stat-value green" id="stat-winrate">0%</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">Avg R/R</div>
+    <div class="stat-value yellow" id="stat-rr">0.00</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">Liq Risk</div>
+    <div class="stat-value green" id="stat-risk">0/10</div>
+    <div class="risk-bar"><div class="risk-fill" id="risk-fill" style="width:10%"></div></div>
+  </div>
+</div>
+
+<!-- EXECUTION CYCLE -->
+<div style="background:var(--card);border-bottom:1px solid var(--border);padding:8px 16px">
+  <div class="panel-title"><div class="dot"></div>EXECUTION CYCLE <span id="cycle-num" style="color:var(--cyan)">#0</span></div>
+  <div class="cycle-bar">
+    <div class="cycle-step" id="step-scan">SCAN</div>
+    <div class="cycle-step" id="step-detect">DETECT</div>
+    <div class="cycle-step" id="step-validate">VALIDATE</div>
+    <div class="cycle-step" id="step-size">SIZE</div>
+    <div class="cycle-step" id="step-fill">FILL</div>
+    <div class="cycle-step" id="step-settle">SETTLE</div>
+  </div>
+</div>
+
+<!-- GRID -->
+<div class="grid grid-3" style="min-height:400px">
+
+  <!-- FORCE GRAPH -->
+  <div class="panel">
+    <div class="panel-title"><div class="dot"></div>MIROFISH · FORCE GRAPH V4.2</div>
+    <svg id="force-graph"></svg>
+  </div>
+
+  <!-- ROBUSTNESS MATRIX -->
+  <div class="panel">
+    <div class="panel-title">ROBUSTNESS MATRIX · <span id="n-assets">7</span> ASSETS × 6 TF</div>
+    <table class="matrix-table" id="matrix-table">
+      <thead><tr><th>ASSET</th><th>5M</th><th>15M</th><th>30M</th><th>1H</th><th>4H</th><th>1D</th><th>AVG</th></tr></thead>
+      <tbody id="matrix-body"></tbody>
+    </table>
+  </div>
+
+  <!-- MONTE CARLO -->
+  <div class="panel">
+    <div class="panel-title">MONTE CARLO SIGNIFICANCE · <span id="mc-paths">8,172</span> PATHS</div>
+    <div class="mc-chart" id="mc-chart"></div>
+    <div class="mc-stats" id="mc-stats">
+      <div class="mc-stat">P-VALUE <span id="mc-pvalue">--</span></div>
+      <div class="mc-stat">P50 <span id="mc-p50">--</span></div>
+      <div class="mc-stat">P95 <span id="mc-p95">--</span></div>
+      <div class="mc-stat">MAX DD <span id="mc-dd">--</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM GRID -->
+<div class="grid" style="margin-top:1px">
+  <!-- POSITIONS -->
+  <div class="panel">
+    <div class="panel-title"><div class="dot"></div>OPEN POSITIONS</div>
+    <div class="positions" id="positions-list">
+      <div style="color:var(--muted)">Aguardando primeiro scan...</div>
+    </div>
+  </div>
+
+  <!-- TRADE LOG -->
+  <div class="panel">
+    <div class="panel-title">TRADE LOG · LIVE STREAM</div>
+    <div class="trade-log">
+      <div class="trade-row" style="color:var(--muted);font-size:9px;border-bottom:1px solid var(--border)">
+        <span>TIME</span><span>MARKET</span><span>SIDE</span><span>SIZE</span><span>STATUS</span>
+      </div>
+      <div id="trade-rows"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const PHASES = ['scan','detect','validate','size','fill','settle'];
+
+// Clock
+setInterval(() => { $('clock').textContent = new Date().toUTCString().slice(0,-4); }, 1000);
+
+// SSE — fase em tempo real
+const es = new EventSource('/stream');
+es.onmessage = e => {
+  const d = JSON.parse(e.data);
+  updatePhase(d.phase || 'idle');
+  $('cycle-num').textContent = '#' + (d.cycle || 0);
+  $('cycle-tick').textContent = '#' + (d.cycle || 0);
+};
+
+function updatePhase(phase) {
+  PHASES.forEach(p => {
+    const el = $('step-' + p);
+    if (!el) return;
+    el.className = 'cycle-step';
+    const idx = PHASES.indexOf(p);
+    const cur = PHASES.indexOf(phase.replace('ing','').replace('validate','validate'));
+    if (phase === 'idle') { el.className = 'cycle-step done'; return; }
+    if (p + 'ing' === phase || p === phase) el.className = 'cycle-step active';
+    else if (idx < PHASES.indexOf(phase.replace('ing','')) ) el.className = 'cycle-step done';
+  });
+}
+
+// Poll estado completo a cada 5s
+async function poll() {
+  try {
+    const r = await fetch('/api/state');
+    const d = await r.json();
+    updateStats(d);
+    updateMatrix(d.robustness, d.assets);
+    updateMonteCarlo(d.monte_carlo);
+    updatePositions(d.positions);
+    updateTrades(d.recent_trades);
+    updateForceGraph(d.positions, d.assets);
+  } catch(e) {}
+}
+setInterval(poll, 5000);
+poll();
+
+function updateStats(d) {
+  const pnl = d.pnl || 0;
+  const el = $('pnl-big');
+  el.textContent = '$' + Math.abs(pnl).toLocaleString('en', {minimumFractionDigits:2,maximumFractionDigits:2});
+  el.className = 'pnl-big' + (pnl < 0 ? ' neg' : '');
+  $('stat-trades').textContent = d.trades || 0;
+  $('stat-wr').textContent = `W:${d.wins||0} L:${d.losses||0}`;
+  $('stat-winrate').textContent = (d.win_rate||0) + '%';
+  $('stat-rr').textContent = (d.avg_rr||0).toFixed(2);
+  const risk = d.liq_risk || 0;
+  $('stat-risk').textContent = risk.toFixed(1) + '/10';
+  $('risk-fill').style.width = (risk * 10) + '%';
+}
+
+function updateMatrix(robustness, assets) {
+  if (!robustness || !assets) return;
+  const tbody = $('matrix-body');
+  tbody.innerHTML = '';
+  assets.forEach(asset => {
+    const row = robustness[asset] || {};
+    const vals = Object.values(row);
+    const avg = vals.length ? vals.reduce((a,b) => a+b,0)/vals.length : 0;
+    const tfs = ['5M','15M','30M','1H','4H','1D'];
+    let tr = `<tr><td style="color:var(--text);text-align:left">${asset}</td>`;
+    tfs.forEach(tf => {
+      const v = row[tf] || 0;
+      const cls = v > 0 ? 'cell-pos' : v < 0 ? 'cell-neg' : 'cell-neu';
+      tr += `<td class="${cls}">${v > 0 ? '+' : ''}${v.toFixed(1)}%</td>`;
+    });
+    const acls = avg > 0 ? 'cell-pos' : avg < 0 ? 'cell-neg' : 'cell-neu';
+    tr += `<td class="${acls}" style="font-weight:700">${avg > 0 ? '+' : ''}${avg.toFixed(1)}%</td></tr>`;
+    tbody.innerHTML += tr;
+  });
+}
+
+function updateMonteCarlo(mc) {
+  if (!mc || !mc.histogram) return;
+  const chart = $('mc-chart');
+  const hist = mc.histogram;
+  const maxH = Math.max(...hist, 1);
+  chart.innerHTML = hist.map(v =>
+    `<div class="mc-bar" style="height:${Math.round(v/maxH*100)}%;background:${v > maxH*0.5 ? 'var(--blue)' : 'var(--purple)'}"></div>`
+  ).join('');
+  $('mc-pvalue').textContent = (mc.p_value || 0).toFixed(3);
+  $('mc-p50').textContent = ((mc.p50||0)*100).toFixed(1) + '%';
+  $('mc-p95').textContent = ((mc.p95||0)*100).toFixed(1) + '%';
+  $('mc-dd').textContent = ((mc.max_drawdown||0)*100).toFixed(1) + '%';
+  $('mc-paths').textContent = (mc.n_paths||8172).toLocaleString();
+}
+
+function updatePositions(positions) {
+  const el = $('positions-list');
+  if (!positions || !positions.length) {
+    el.innerHTML = '<div style="color:var(--muted)">Nenhuma posição aberta</div>';
+    return;
+  }
+  el.innerHTML = positions.map(p => {
+    const cls = p.state === 'BULL' ? 'badge-bull' : p.state === 'BEAR' ? 'badge-bear' : 'badge-neu';
+    return `<div class="pos-row">
+      <div class="pos-q">${p.question}</div>
+      <span class="pos-badge ${cls}">${p.state}</span>
+      <span class="side-yes">YES</span>
+      <span style="color:var(--white)">$${(p.size||0).toFixed(2)}</span>
+      <span style="color:var(--cyan)">+${((p.edge||0)*100).toFixed(2)}%</span>
+    </div>`;
+  }).join('');
+}
+
+function updateTrades(trades) {
+  const el = $('trade-rows');
+  if (!trades || !trades.length) return;
+  el.innerHTML = [...trades].reverse().slice(0,15).map(t => {
+    const time = t.ts ? t.ts.slice(11,19) : '--';
+    const cls = t.side === 'YES' ? 'side-yes' : 'side-no';
+    const status = t.status || '';
+    const statusColor = status.includes('fill') ? 'var(--green)' : status.includes('sim') ? 'var(--yellow)' : 'var(--muted)';
+    return `<div class="trade-row">
+      <span style="color:var(--muted)">${time}</span>
+      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${(t.question||'').slice(0,30)}</span>
+      <span class="${cls}">${t.side}</span>
+      <span>$${(t.size_usdc||0).toFixed(1)}</span>
+      <span style="color:${statusColor}">${status.slice(0,8)}</span>
+    </div>`;
+  }).join('');
+}
+
+// Force Graph D3
+let svg, sim;
+function updateForceGraph(positions, assets) {
+  const w = $('force-graph').parentElement.clientWidth - 24;
+  const h = 250;
+
+  if (!svg) {
+    svg = d3.select('#force-graph').attr('width', w).attr('height', h);
+  }
+  svg.selectAll('*').remove();
+
+  const nodes = (assets || []).map((a, i) => ({
+    id: a,
+    type: 'asset',
+    x: w/2 + Math.cos(i/assets.length*Math.PI*2) * 80,
+    y: h/2 + Math.sin(i/assets.length*Math.PI*2) * 80,
+  }));
+
+  (positions || []).forEach((p, i) => {
+    nodes.push({
+      id: 'pos_' + i,
+      label: p.state,
+      type: 'position',
+      state: p.state,
+      edge: p.edge || 0,
+      x: w/2 + (Math.random() - 0.5) * 120,
+      y: h/2 + (Math.random() - 0.5) * 120,
+    });
+  });
+
+  const links = (positions || []).map((p, i) => ({
+    source: (assets||[]).find(a => (p.question||'').toUpperCase().includes(a)) || (assets||[])[0] || 'BTC',
+    target: 'pos_' + i,
+  })).filter(l => l.source);
+
+  sim = d3.forceSimulation(nodes)
+    .force('link', d3.forceLink(links).id(d => d.id).distance(60))
+    .force('charge', d3.forceManyBody().strength(-80))
+    .force('center', d3.forceCenter(w/2, h/2))
+    .on('tick', () => {
+      svg.selectAll('line').attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
+      svg.selectAll('circle').attr('cx',d=>d.x).attr('cy',d=>d.y);
+      svg.selectAll('text').attr('x',d=>d.x).attr('y',d=>d.y+4);
+    });
+
+  svg.append('g').selectAll('line').data(links).join('line')
+    .attr('stroke','#2a2a4a').attr('stroke-width',1);
+
+  svg.append('g').selectAll('circle').data(nodes).join('circle')
+    .attr('r', d => d.type === 'asset' ? 18 : Math.max(8, (d.edge||0)*200))
+    .attr('fill', d => {
+      if (d.type === 'asset') return '#1a1a3a';
+      return d.state === 'BULL' ? '#003322' : d.state === 'BEAR' ? '#330011' : '#1a1a2a';
+    })
+    .attr('stroke', d => {
+      if (d.type === 'asset') return '#4488ff';
+      return d.state === 'BULL' ? '#00ff88' : d.state === 'BEAR' ? '#ff3366' : '#4a5068';
+    })
+    .attr('stroke-width', 1.5);
+
+  svg.append('g').selectAll('text').data(nodes).join('text')
+    .text(d => d.id.startsWith('pos_') ? (d.label||'') : d.id)
+    .attr('text-anchor','middle')
+    .attr('font-size', d => d.type === 'asset' ? '10px' : '8px')
+    .attr('fill', d => d.type === 'asset' ? '#4488ff' : '#c8d0e0');
+}
+</script>
+</body>
+</html>
