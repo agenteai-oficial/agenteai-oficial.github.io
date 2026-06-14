@@ -1,4 +1,13 @@
 import os
+from pathlib import Path
+
+# Carrega .env local se existir (gerado pelo CONFIGURAR-SNIPER.bat)
+_env = Path(__file__).parent / ".env"
+if _env.exists():
+    for _line in _env.read_text().splitlines():
+        if "=" in _line and not _line.startswith("#"):
+            _k, _v = _line.split("=", 1)
+            os.environ.setdefault(_k.strip(), _v.strip())
 
 # Polymarket API (geradas no app após KYC)
 POLYMARKET_API_KEY    = os.getenv("POLYMARKET_API_KEY", "")
