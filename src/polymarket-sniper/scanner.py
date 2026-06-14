@@ -93,6 +93,16 @@ def get_crypto_markets() -> list[dict]:
             "asset":        next((a for a in ASSETS if a in (m.get("question") or "").upper()), "OTHER"),
         })
 
+    if not result:
+        from config import EXECUTION_MODE
+        print(f"  [scanner] 0 mercados de crypto na API — usando dados simulados")
+        mocks = _mock_markets()
+        for m in mocks:
+            spread = m["yes_price"] + m["no_price"]
+            m["spread"] = round(spread, 4)
+            m["arb_profit"] = round(1.0 - spread, 4)
+        return sorted(mocks, key=lambda x: x["arb_profit"], reverse=True)
+
     return sorted(result, key=lambda x: x["arb_profit"], reverse=True)
 
 
