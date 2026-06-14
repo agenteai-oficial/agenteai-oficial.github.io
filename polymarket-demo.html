@@ -452,57 +452,56 @@ function drawGraph(){
   }
   fgSvg.selectAll('*').remove();
 
-  // Generate ~180 nodes
   const assets=['BTC','ETH','SOL','BNB','XRP','ADA','DOT'];
   const nodes=[];
   const links=[];
 
-  // Asset hub nodes (large)
+  // Hub positions: spread across canvas in 2 rows
+  const hubPos=[
+    {x:W*0.12,y:H*0.28},{x:W*0.30,y:H*0.22},{x:W*0.50,y:H*0.30},
+    {x:W*0.70,y:H*0.22},{x:W*0.88,y:H*0.28},
+    {x:W*0.25,y:H*0.72},{x:W*0.72,y:H*0.72},
+  ];
   assets.forEach((a,i)=>{
-    nodes.push({id:a,type:'hub',label:a,
-      x:W/2+Math.cos(i/assets.length*Math.PI*2)*120,
-      y:H/2+Math.sin(i/assets.length*Math.PI*2)*120});
+    const p=hubPos[i];
+    nodes.push({id:a,type:'hub',label:a,fx:p.x,fy:p.y,x:p.x,y:p.y});
   });
 
-  // Signal nodes (medium) — 25 per asset cluster
+  // ~25 signal nodes per hub, spanning out radially
   let nid=assets.length;
   assets.forEach((a,ai)=>{
-    const cnt=Math.floor(rand(18,28));
+    const cnt=Math.floor(rand(22,32));
+    const hub=nodes[ai];
     for(let i=0;i<cnt;i++){
-      const angle=(i/cnt)*Math.PI*2;
-      const r=rand(40,100);
-      const hubX=nodes[ai].x, hubY=nodes[ai].y;
+      const angle=(i/cnt)*Math.PI*2+rand(-0.3,0.3);
+      const r=rand(35,110);
       const id='sig_'+nid++;
       nodes.push({id,type:'signal',label:pick(NODE_TYPES),
-        x:hubX+Math.cos(angle)*r+rand(-20,20),
-        y:hubY+Math.sin(angle)*r+rand(-20,20),
-        asset:a});
+        x:hub.fx+Math.cos(angle)*r,y:hub.fy+Math.sin(angle)*r,asset:a});
       links.push({source:a,target:id});
-      // cross-links
-      if(Math.random()<0.15&&nodes.length>assets.length+2){
-        const other=nodes[Math.floor(rand(assets.length,nodes.length-1))];
-        if(other&&other.id!==id) links.push({source:id,target:other.id});
+      if(Math.random()<0.18){
+        const oi=Math.floor(rand(0,assets.length));
+        if(oi!==ai) links.push({source:id,target:assets[oi]});
       }
     }
   });
 
-  // Extra scatter nodes
-  for(let i=0;i<30;i++){
-    const id='extra_'+i;
+  // Bridge / cross-market nodes
+  for(let i=0;i<35;i++){
+    const id='x_'+i;
     nodes.push({id,type:'extra',label:pick(NODE_TYPES),
-      x:rand(20,W-20),y:rand(20,H-60)});
-    if(Math.random()<0.6){
-      const src=nodes[Math.floor(rand(0,nodes.length-1))];
-      links.push({source:src.id,target:id});
-    }
+      x:rand(30,W-30),y:rand(30,H-50)});
+    const a1=assets[Math.floor(rand(0,assets.length))];
+    const a2=assets[Math.floor(rand(0,assets.length))];
+    links.push({source:a1,target:id});
+    if(Math.random()<0.5) links.push({source:a2,target:id});
   }
 
   const sim2=d3.forceSimulation(nodes)
-    .force('link',d3.forceLink(links).id(d=>d.id).distance(d=>d.source.type==='hub'?45:25).strength(0.3))
-    .force('charge',d3.forceManyBody().strength(d=>d.type==='hub'?-80:-20))
-    .force('center',d3.forceCenter(W/2,(H-30)/2))
-    .force('collide',d3.forceCollide(d=>d.type==='hub'?20:8))
-    .alphaDecay(0.08);
+    .force('link',d3.forceLink(links).id(d=>d.id).distance(30).strength(0.2))
+    .force('charge',d3.forceManyBody().strength(d=>d.type==='hub'?0:-18))
+    .force('collide',d3.forceCollide(d=>d.type==='hub'?22:6))
+    .alphaDecay(0.06);
 
   const linkSel=fgSvg.append('g')
     .selectAll('line').data(links).join('line')
