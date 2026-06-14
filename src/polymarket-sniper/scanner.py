@@ -23,12 +23,13 @@ def _get(path: str, params: dict | None = None) -> list | dict:
 
 def _mock_markets() -> list[dict]:
     """Mercados simulados para testes sem acesso à API."""
+    # Preços baixos (0.30-0.52) para que o Markov (~0.55-0.70) tenha edge positivo
     return [
         {
             "id": f"mock-{a}-{i}",
             "question": f"Will {a} be above ${random.randint(90000, 120000)}k on June 30?",
-            "yes_price": round(random.uniform(0.40, 0.70), 4),
-            "no_price":  round(random.uniform(0.25, 0.55), 4),
+            "yes_price": round(random.uniform(0.30, 0.52), 4),
+            "no_price":  round(random.uniform(0.30, 0.52), 4),
             "spread":    0.0,
             "arb_profit": 0.0,
             "liquidity": random.uniform(5000, 50000),
@@ -37,7 +38,7 @@ def _mock_markets() -> list[dict]:
             "no_token_id":  f"mock-no-{a}-{i}",
             "asset": a,
         }
-        for a in ["BTC", "ETH", "SOL"]
+        for a in ["BTC", "ETH", "SOL", "BNB", "XRP"]
         for i in range(3)
     ]
 

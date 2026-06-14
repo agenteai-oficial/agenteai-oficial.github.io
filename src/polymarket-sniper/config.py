@@ -35,7 +35,7 @@ KELLY_FRACTION = 0.25
 MAX_POSITION_USDC = 100.0
 
 # Lucro mínimo esperado por trade (USDC)
-MIN_EXPECTED_PROFIT = 0.50
+MIN_EXPECTED_PROFIT = 0.10
 
 # Modo de execução: "alert" | "dry_run" | "live"
 EXECUTION_MODE = os.getenv("EXECUTION_MODE", "alert")
