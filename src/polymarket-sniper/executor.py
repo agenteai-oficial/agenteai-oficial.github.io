@@ -24,7 +24,8 @@ def _save_log(log: list) -> None:
 def claude_edge_check(market: dict, markov: dict) -> dict:
     """Usa Fable 5 para validar oportunidade quando Markov tem baixa confiança."""
     if not ANTHROPIC_API_KEY:
-        return {"verdict": "SKIP", "reason": "ANTHROPIC_API_KEY não configurado"}
+        # Sem Claude, confia no Markov mesmo com confiança menor
+        return {"verdict": "ENTER", "p_yes": markov.get("p_bull", 0.5), "reason": "sem LLM — usando Markov direto"}
     try:
         import anthropic
         client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
