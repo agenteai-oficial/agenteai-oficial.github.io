@@ -40,7 +40,7 @@ MAX_POSITION_USDC = 100.0
 MIN_EXPECTED_PROFIT = 0.10
 
 # Modo de execução: "alert" | "dry_run" | "live"
-EXECUTION_MODE = os.getenv("EXECUTION_MODE", "alert")
+EXECUTION_MODE = os.getenv("EXECUTION_MODE", "dry_run")
 
 # Webhook para alertas (Discord/Slack/Telegram)
 WEBHOOK_URL = os.getenv("WEBHOOK_URL", "")
