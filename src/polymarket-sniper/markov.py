@@ -46,15 +46,17 @@ def predict(prices: list[float], steps: int = 3, lookback: int = MARKOV_LOOKBACK
     for _ in range(steps):
         dist = dist @ matrix
 
-    # P(YES resolve) = probabilidade de continuar BULL
-    p_yes = float(dist[BULL])
+    p_bull = float(dist[BULL])
+    p_neutral = float(dist[NEUTRAL])
     p_bear = float(dist[BEAR])
+    # P(YES resolve) em mercado binário: BULL total + 50% do NEUTRAL (estado ambíguo)
+    p_yes = p_bull + 0.5 * p_neutral
     confidence = float(max(dist))
 
     return {
         "current_state": STATE_NAMES[state],
-        "p_bull": round(p_yes, 4),
-        "p_neutral": round(float(dist[NEUTRAL]), 4),
+        "p_bull": round(p_yes, 4),   # p_yes composto usado pelo Kelly
+        "p_neutral": round(p_neutral, 4),
         "p_bear": round(p_bear, 4),
         "confidence": round(confidence, 4),
         "steps": steps,
