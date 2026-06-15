@@ -46,31 +46,33 @@ def _mock_markets() -> list[dict]:
 def get_crypto_markets() -> list[dict]:
     """Busca mercados de crypto ativos. Usa mock se API indisponível."""
     try:
-        markets = _get("/markets", {"active": "true", "closed": "false", "limit": "200"})
+        # Tenta buscar mercados de cripto diretamente por tag/categoria
+        markets = _get("/markets", {"active": "true", "closed": "false", "limit": "500", "tag_slug": "crypto"})
+        if not markets:
+            markets = _get("/markets", {"active": "true", "closed": "false", "limit": "500"})
     except Exception as e:
-        print(f"  [scanner] Gamma API indisponível ({e}) — usando dados simulados para dry_run")
-        mocks = _mock_markets()
-        for m in mocks:
-            # Gera spread aleatório para simular oportunidades
-            spread = m["yes_price"] + m["no_price"]
-            m["spread"] = round(spread, 4)
-            m["arb_profit"] = round(1.0 - spread, 4)
-        return sorted(mocks, key=lambda x: x["arb_profit"], reverse=True)
+        print(f"  [scanner] Gamma API indisponível ({e}) — usando dados simulados")
+        return _make_mocks_with_spread()
+
+    # Palavras-chave expandidas para pegar mais mercados crypto
+    CRYPTO_KEYWORDS = ASSETS + ["BITCOIN", "ETHEREUM", "SOLANA", "CRYPTO", "COIN", "TOKEN", "PRICE", "ABOVE", "BELOW", "CIMA", "BAIXO"]
 
     result = []
     for m in markets:
         question = (m.get("question") or "").upper()
-        if not any(asset in question for asset in ASSETS):
+        if not any(kw in question for kw in CRYPTO_KEYWORDS):
             continue
 
         tokens = m.get("tokens", [])
         if len(tokens) < 2:
             continue
 
-        yes_token = next((t for t in tokens if t.get("outcome", "").upper() == "YES"), None)
-        no_token  = next((t for t in tokens if t.get("outcome", "").upper() == "NO"), None)
-        if not yes_token or not no_token:
-            continue
+        yes_token = next((t for t in tokens if t.get("outcome", "").upper() in ("YES", "SIM", "UP", "CIMA")), None)
+        no_token  = next((t for t in tokens if t.get("outcome", "").upper() in ("NO", "NÃO", "NAO", "DOWN", "BAIXO")), None)
+        if not yes_token:
+            yes_token = tokens[0]
+        if not no_token:
+            no_token = tokens[1]
 
         yes_price = float(yes_token.get("price", 0) or 0)
         no_price  = float(no_token.get("price", 0) or 0)
@@ -79,6 +81,7 @@ def get_crypto_markets() -> list[dict]:
 
         spread = yes_price + no_price
         liquidity = float(m.get("liquidity", 0) or 0)
+        asset = next((a for a in ASSETS if a in question), "CRYPTO")
 
         result.append({
             "id":           m.get("id", ""),
@@ -91,29 +94,33 @@ def get_crypto_markets() -> list[dict]:
             "end_date":     m.get("endDateIso", ""),
             "yes_token_id": yes_token.get("token_id", ""),
             "no_token_id":  no_token.get("token_id", ""),
-            "asset":        next((a for a in ASSETS if a in (m.get("question") or "").upper()), "OTHER"),
+            "asset":        asset,
         })
 
     if not result:
-        from config import EXECUTION_MODE
         print(f"  [scanner] 0 mercados de crypto na API — usando dados simulados")
-        mocks = _mock_markets()
-        for m in mocks:
-            spread = m["yes_price"] + m["no_price"]
-            m["spread"] = round(spread, 4)
-            m["arb_profit"] = round(1.0 - spread, 4)
-        return sorted(mocks, key=lambda x: x["arb_profit"], reverse=True)
+        return _make_mocks_with_spread()
 
     return sorted(result, key=lambda x: x["arb_profit"], reverse=True)
+
+
+def _make_mocks_with_spread() -> list[dict]:
+    mocks = _mock_markets()
+    for m in mocks:
+        spread = m["yes_price"] + m["no_price"]
+        m["spread"] = round(spread, 4)
+        m["arb_profit"] = round(1.0 - spread, 4)
+    return sorted(mocks, key=lambda x: x["arb_profit"], reverse=True)
 
 
 def get_price_history(token_id: str, limit: int = 200) -> list[float]:
     """Histórico de preços de um token. Retorna simulado se API indisponível."""
     if token_id.startswith("mock-"):
-        # Gera série de preços simulada para testes Markov
-        prices = [0.5]
+        # Série com drift positivo — Markov detecta BULL e gera edge
+        prices = [random.uniform(0.30, 0.42)]
         for _ in range(limit - 1):
-            prices.append(max(0.01, min(0.99, prices[-1] + random.gauss(0, 0.01))))
+            drift = random.gauss(0.003, 0.008)  # tendência de alta leve
+            prices.append(max(0.01, min(0.99, prices[-1] + drift)))
         return prices
 
     try:
