@@ -120,9 +120,12 @@ def _fetch_all_markets() -> list[dict]:
             if raw:
                 print(f"  [scanner] {path} retornou {len(raw)} mercados")
                 # Debug: mostra estrutura do primeiro
-                if raw:
-                    first = raw[0]
-                    print(f"  [scanner] Amostra: q={str(first.get('question',''))[:60]} tokens={len(first.get('tokens',[]))} outcomes={first.get('outcomes','n/a')[:40] if isinstance(first.get('outcomes'),'') else first.get('outcomes','n/a')}")
+                first = raw[0]
+                q = str(first.get("question") or first.get("title") or "")[:60]
+                n_tokens = len(first.get("tokens", []))
+                outcomes = first.get("outcomes", "n/a")
+                outcomes_str = str(outcomes)[:50]
+                print(f"  [scanner] Amostra: q={q} | tokens={n_tokens} | outcomes={outcomes_str}")
                 return raw
         except Exception as e:
             print(f"  [scanner] {path} falhou: {e}")
