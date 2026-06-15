@@ -272,7 +272,7 @@ const NODE_TYPES = ['BEAR SIG','BULL SIG','MEDIAWPATH','CATALYST','CLUSTER','COL
 // Estado real (atualizado pela API)
 let real = { pnl:0, trades:0, wins:0, losses:0, win_rate:0, avg_rr:0, liq_risk:0, cycle:0, phase:'idle', positions:[], recent_trades:[] };
 // Estado visual/simulado
-let viz = { streak:0, pace:0, bestMultiplier:1, bestEntry:0, bestPayout:0, bestDate:'', startTs: Date.now() };
+let viz = { streak:64, pace:298, bestMultiplier:109, bestEntry:34, bestPayout:4344, bestDate:'MAY 17', startTs: Date.now() };
 
 // Clock
 setInterval(()=>{
@@ -356,18 +356,17 @@ function renderViz(){
   $('lb-ranks').textContent='+'+Math.floor(rand(12,25));
   $('lb-trades').textContent=String(Math.floor(rand(60,99))).padStart(3,'0');
 
-  // Biggest Win — atualiza com melhor trade real quando possível
-  const mult = Math.max(viz.bestMultiplier, real.wins > 0 ? Math.ceil(rand(2,5)*real.wins*0.1+1) : 1);
-  viz.bestMultiplier = mult;
-  $('bw-x').textContent = 'X' + Math.min(999, Math.max(1, Math.round(mult)));
-  const entry = viz.bestEntry || 34; const payout = viz.bestPayout || entry * mult;
-  $('bw-entry').innerHTML = 'ENTRY $'+entry+' → <span>$'+Math.round(payout).toLocaleString()+'</span>';
-  $('bw-mkt').textContent='BTC!5M'; $('bw-alpha').textContent='+'+Math.ceil(mult/10)+'Kx';
+  // Biggest Win — baseline X109, cresce com wins reais
+  if(real.wins > 0) viz.bestMultiplier = Math.max(109, Math.ceil(109 + real.wins * 0.5));
+  const mult = viz.bestMultiplier;
+  $('bw-x').textContent = 'X' + mult;
+  $('bw-entry').innerHTML = 'ENTRY $'+viz.bestEntry+' → <span>$'+viz.bestPayout.toLocaleString()+'</span>';
+  $('bw-mkt').textContent='BTC!5M'; $('bw-alpha').textContent='+12Kx';
   $('bw-cat').textContent='CPI HIT'; $('bw-sharpe').textContent=rand(4.2,5.4).toFixed(2);
-  $('bw-apy').textContent=Math.ceil(mult/3)+'Kx'; $('bw-hold').textContent='4M 125';
-  const d=new Date(); $('bw-date').textContent=d.toLocaleString('en',{month:'short',day:'2-digit'}).toUpperCase();
-  $('bw-wins7').textContent=Math.max(real.wins, Math.floor(rand(50,400)));
-  $('bw-bestday').textContent='+$'+Math.floor(rand(1000,30000)).toLocaleString();
+  $('bw-apy').textContent='41Kx'; $('bw-hold').textContent='4M 125';
+  $('bw-date').textContent=viz.bestDate;
+  $('bw-wins7').textContent=Math.max(real.wins, 312);
+  $('bw-bestday').textContent='+$'+Math.floor(rand(20000,30000)).toLocaleString();
 }
 
 // Robustness matrix — usa dados reais quando disponíveis, senão simula
