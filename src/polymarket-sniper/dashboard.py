@@ -17,7 +17,7 @@ from learner import get_state as get_learner_state
 from config import DASHBOARD_PORT, ASSETS
 
 app = FastAPI()
-_html = (Path(__file__).parent / "dashboard.html").read_text()
+_html = (Path(__file__).parent / "dashboard.html").read_text(encoding="utf-8")
 
 
 @app.get("/", response_class=HTMLResponse)
