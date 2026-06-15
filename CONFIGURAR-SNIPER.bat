@@ -4,18 +4,30 @@ echo ============================================
 echo  CONFIGURAR CHAVES DO SNIPER
 echo ============================================
 echo.
-echo Para obter as chaves acesse:
-echo  polymarket.com/settings ^> Chaves API do Relayer
+echo Voce precisara de:
+echo  1. API KEY    — polymarket.com/settings ^> Chaves API
+echo  2. ENDERECO   — o mesmo (0x...)
+echo  3. PRIVATE KEY — MetaMask ^> Conta ^> Exportar chave privada
 echo.
-echo  1. API KEY  (019ec8bd-80bd-7013-bd8e-...)
-echo  2. ENDERECO (0x1dc3b401f3...)
+echo ============================================
+echo  AVISO DE SEGURANCA — LEIA COM ATENCAO
+echo ============================================
+echo.
+echo A chave privada (private key) da MetaMask da acesso
+echo TOTAL a todos os fundos dessa carteira.
+echo.
+echo  - Use UMA CARTEIRA SEPARADA so para o bot
+echo  - Coloque APENAS o valor que aceita perder
+echo  - NUNCA compartilhe o arquivo .env com ninguem
+echo  - O arquivo fica em: src\polymarket-sniper\.env
 echo.
 echo ============================================
 echo.
 
-set /p POLY_KEY="1. Cole sua API KEY: "
+set /p POLY_KEY="1. Cole sua API KEY (019ec8bd...): "
 set /p POLY_ADDR="2. Cole seu ENDERECO (0x...): "
-set /p ANTHROPIC="ANTHROPIC_API_KEY (opcional, Enter para pular): "
+set /p PRIV_KEY="3. Cole sua PRIVATE KEY da MetaMask (0x...): "
+set /p ANTHROPIC="4. ANTHROPIC_API_KEY (opcional, Enter pula): "
 
 echo.
 echo Salvando configuracao...
@@ -23,6 +35,7 @@ echo Salvando configuracao...
 (
 echo POLYMARKET_API_KEY=%POLY_KEY%
 echo POLYMARKET_API_KEY_ADDRESS=%POLY_ADDR%
+echo WALLET_PRIVATE_KEY=%PRIV_KEY%
 echo ANTHROPIC_API_KEY=%ANTHROPIC%
 echo EXECUTION_MODE=live
 ) > "%~dp0src\polymarket-sniper\.env"
@@ -30,7 +43,10 @@ echo EXECUTION_MODE=live
 echo.
 echo [OK] Configuracao salva em src\polymarket-sniper\.env
 echo.
-echo ATENCAO: NUNCA compartilhe este arquivo .env com ninguem!
+echo NUNCA compartilhe este arquivo ou a private key!
 echo.
-echo Para iniciar o bot: RODAR-LIVE.bat
+echo Proximo passo:
+echo   pip install py-clob-client
+echo   python src\polymarket-sniper\dashboard.py
+echo.
 pause

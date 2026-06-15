@@ -101,19 +101,51 @@ _RELAYER_URLS = [
 
 
 def _execute_live(order: dict, market: dict, side: str, size_usdc: float) -> dict:
-    """Executa ordem via Polymarket Relayer (API Key + Address)."""
-    from config import POLYMARKET_API_KEY, POLYMARKET_API_KEY_ADDRESS
-
-    if not POLYMARKET_API_KEY or not POLYMARKET_API_KEY_ADDRESS:
-        order["status"] = "error"
-        order["error"] = "POLYMARKET_API_KEY não configurado. Rode CONFIGURAR-SNIPER.bat."
-        print("  [executor] API Key não configurada")
-        return order
+    """Executa ordem via Polymarket CLOB — usa py-clob-client com private key."""
+    from config import POLYMARKET_API_KEY, POLYMARKET_API_KEY_ADDRESS, WALLET_PRIVATE_KEY
 
     token_id = market["yes_token_id"] if side == "YES" else market["no_token_id"]
     price = market["yes_price"] if side == "YES" else market["no_price"]
     size = round(size_usdc / price, 2)
 
+    if WALLET_PRIVATE_KEY:
+        try:
+            from py_clob_client.client import ClobClient
+            from py_clob_client.clob_types import OrderArgs
+            from py_clob_client.constants import POLYGON
+            from py_clob_client.order_builder.constants import BUY as CLOB_BUY
+
+            client = ClobClient(
+                host="https://clob.polymarket.com",
+                key=WALLET_PRIVATE_KEY,
+                chain_id=POLYGON,
+                signature_type=0,
+                funder=POLYMARKET_API_KEY_ADDRESS,
+            )
+            client.set_api_creds(client.create_or_derive_api_creds())
+
+            order_args = OrderArgs(
+                price=price,
+                size=size,
+                side=CLOB_BUY,
+                token_id=token_id,
+            )
+            resp = client.create_and_post_order(order_args)
+            success = resp.get("success") or resp.get("orderID") or resp.get("id")
+            order["status"] = "filled" if success else "submitted"
+            order["exchange_response"] = str(resp)[:200]
+            print(f"  [executor] ordem {order['status']}: {resp}")
+            return order
+        except ImportError:
+            print("  [executor] py-clob-client não instalado. Execute: pip install py-clob-client")
+        except Exception as e:
+            order["status"] = "error"
+            order["error"] = str(e)
+            print(f"  [executor] erro CLOB: {e}")
+            return order
+
+    # Sem private key — tenta headers simples (provavelmente 401, mas loga o erro real)
+    print("  [executor] WALLET_PRIVATE_KEY não configurado. Rode CONFIGURAR-SNIPER.bat para adicionar.")
     payload = json.dumps({
         "orderType": "LIMIT",
         "tokenID": token_id,
@@ -121,30 +153,24 @@ def _execute_live(order: dict, market: dict, side: str, size_usdc: float) -> dic
         "size": str(size),
         "side": "BUY",
     }).encode()
-
     last_err = None
     for url in _RELAYER_URLS:
         try:
             req = urllib.request.Request(
-                url,
-                data=payload,
-                headers={
-                    "Content-Type": "application/json",
-                    "POLY_API_KEY": POLYMARKET_API_KEY,
-                    "POLY_ADDRESS": POLYMARKET_API_KEY_ADDRESS,
-                },
+                url, data=payload,
+                headers={"Content-Type": "application/json",
+                         "POLY_API_KEY": POLYMARKET_API_KEY,
+                         "POLY_ADDRESS": POLYMARKET_API_KEY_ADDRESS},
                 method="POST",
             )
             with urllib.request.urlopen(req, timeout=10) as r:
                 resp = json.loads(r.read())
             order["status"] = "filled" if resp.get("success") else "submitted"
             order["exchange_response"] = str(resp)[:200]
-            print(f"  [executor] ordem {order['status']} via {url}: {resp}")
+            print(f"  [executor] ordem {order['status']} via {url}")
             return order
         except Exception as e:
             last_err = e
-            print(f"  [executor] {url} falhou: {e}")
-
     order["status"] = "error"
     order["error"] = str(last_err)
     return order
