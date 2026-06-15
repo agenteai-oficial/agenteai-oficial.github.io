@@ -94,29 +94,80 @@ def place_order(
 
 
 def _execute_live(order: dict, market: dict, side: str, size_usdc: float) -> dict:
-    """Executa ordem via Polymarket Relayer API (sem gas, sem private key)."""
+    """Executa ordem via Polymarket CLOB API com py-clob-client."""
+    from config import POLYMARKET_API_KEY, POLYMARKET_API_SECRET, POLYMARKET_PASSPHRASE, POLYMARKET_API_KEY_ADDRESS
+
+    if not POLYMARKET_API_SECRET or not POLYMARKET_PASSPHRASE:
+        order["status"] = "error"
+        order["error"] = "API Secret/Passphrase não configurados. Rode CONFIGURAR-SNIPER.bat novamente."
+        print("  [executor] ATENÇÃO: rode CONFIGURAR-SNIPER.bat e informe API Secret + Passphrase")
+        return order
+
     try:
-        from config import POLYMARKET_API_KEY, POLYMARKET_API_KEY_ADDRESS
+        from py_clob_client.client import ClobClient
+        from py_clob_client.clob_types import ApiCreds, OrderArgs
+        from py_clob_client.constants import POLYGON
 
         token_id = market["yes_token_id"] if side == "YES" else market["no_token_id"]
         price = market["yes_price"] if side == "YES" else market["no_price"]
         size = round(size_usdc / price, 2)
 
-        payload = json.dumps({
-            "orderType": "LIMIT",
-            "tokenID": token_id,
-            "price": str(price),
-            "size": str(size),
-            "side": "BUY",
-        }).encode()
+        client = ClobClient(
+            host="https://clob.polymarket.com",
+            chain_id=POLYGON,
+            creds=ApiCreds(
+                api_key=POLYMARKET_API_KEY,
+                api_secret=POLYMARKET_API_SECRET,
+                api_passphrase=POLYMARKET_PASSPHRASE,
+            ),
+        )
+        order_args = OrderArgs(token_id=token_id, price=price, size=size, side="BUY")
+        signed = client.create_order(order_args)
+        resp = client.post_order(signed)
+        order["status"] = "filled" if resp.get("success") else "submitted"
+        order["exchange_response"] = str(resp)[:200]
+        print(f"  [executor] ordem {order['status']}: {resp}")
+
+    except ImportError:
+        # py-clob-client não instalado — fallback HTTP direto
+        order = _execute_live_http(order, market, side, size_usdc)
+    except Exception as e:
+        order["status"] = "error"
+        order["error"] = str(e)
+        print(f"  [executor] erro na ordem live: {e}")
+
+    return order
+
+
+def _execute_live_http(order: dict, market: dict, side: str, size_usdc: float) -> dict:
+    """Fallback: POST direto ao CLOB sem py-clob-client."""
+    import base64, hashlib, hmac, time
+    from config import POLYMARKET_API_KEY, POLYMARKET_API_SECRET, POLYMARKET_PASSPHRASE, POLYMARKET_API_KEY_ADDRESS
+    try:
+        token_id = market["yes_token_id"] if side == "YES" else market["no_token_id"]
+        price = market["yes_price"] if side == "YES" else market["no_price"]
+        size = round(size_usdc / price, 2)
+
+        body = json.dumps({"orderType": "LIMIT", "tokenID": token_id,
+                           "price": str(price), "size": str(size), "side": "BUY"})
+        timestamp = str(int(time.time()))
+        nonce = "0"
+        msg = timestamp + "POST" + "/order" + body
+        sig = base64.b64encode(
+            hmac.new(base64.b64decode(POLYMARKET_API_SECRET), msg.encode(), hashlib.sha256).digest()
+        ).decode()
 
         req = urllib.request.Request(
-            "https://relayer.polymarket.com/order",
-            data=payload,
+            "https://clob.polymarket.com/order",
+            data=body.encode(),
             headers={
                 "Content-Type": "application/json",
-                "RELAYER_API_KEY": POLYMARKET_API_KEY,
-                "RELAYER_API_KEY_ADDRESS": POLYMARKET_API_KEY_ADDRESS,
+                "POLY_ADDRESS": POLYMARKET_API_KEY_ADDRESS,
+                "POLY_SIGNATURE": sig,
+                "POLY_TIMESTAMP": timestamp,
+                "POLY_NONCE": nonce,
+                "POLY_API_KEY": POLYMARKET_API_KEY,
+                "POLY_PASSPHRASE": POLYMARKET_PASSPHRASE,
             },
             method="POST",
         )
@@ -127,8 +178,7 @@ def _execute_live(order: dict, market: dict, side: str, size_usdc: float) -> dic
     except Exception as e:
         order["status"] = "error"
         order["error"] = str(e)
-        print(f"  [executor] erro na ordem live: {e}")
-
+        print(f"  [executor] erro HTTP fallback: {e}")
     return order
 
 
