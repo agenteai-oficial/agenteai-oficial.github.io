@@ -4,7 +4,7 @@
 import asyncio
 import json
 import threading
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -52,7 +52,7 @@ def api_state():
         "robustness": snap.get("robustness", {}),
         "recent_trades": get_recent_trades(20),
         "assets": ASSETS,
-        "ts": datetime.utcnow().isoformat(),
+        "ts": datetime.now(timezone.utc).isoformat(),
     }
 
 
