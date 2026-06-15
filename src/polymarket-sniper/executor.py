@@ -94,32 +94,35 @@ def place_order(
 
 
 def _execute_live(order: dict, market: dict, side: str, size_usdc: float) -> dict:
-    """Executa ordem real via py-clob-client."""
+    """Executa ordem via Polymarket Relayer API (sem gas, sem private key)."""
     try:
-        from py_clob_client.client import ClobClient
-        from py_clob_client.clob_types import OrderArgs, OrderType
-        from config import POLYMARKET_API_KEY, POLYMARKET_API_SECRET, POLYMARKET_PASSPHRASE, WALLET_PRIVATE_KEY
+        from config import POLYMARKET_API_KEY, POLYMARKET_API_KEY_ADDRESS
 
-        client = ClobClient(
-            host="https://clob.polymarket.com",
-            key=WALLET_PRIVATE_KEY,
-            chain_id=137,  # Polygon
-            api_key=POLYMARKET_API_KEY,
-            api_secret=POLYMARKET_API_SECRET,
-            api_passphrase=POLYMARKET_PASSPHRASE,
-        )
         token_id = market["yes_token_id"] if side == "YES" else market["no_token_id"]
         price = market["yes_price"] if side == "YES" else market["no_price"]
         size = round(size_usdc / price, 2)
 
-        resp = client.create_and_post_order(OrderArgs(
-            token_id=token_id,
-            price=price,
-            size=size,
-            side="BUY",
-            order_type=OrderType.LIMIT,
-        ))
-        order["status"] = "filled" if resp else "submitted"
+        payload = json.dumps({
+            "orderType": "LIMIT",
+            "tokenID": token_id,
+            "price": str(price),
+            "size": str(size),
+            "side": "BUY",
+        }).encode()
+
+        req = urllib.request.Request(
+            "https://relayer.polymarket.com/order",
+            data=payload,
+            headers={
+                "Content-Type": "application/json",
+                "RELAYER_API_KEY": POLYMARKET_API_KEY,
+                "RELAYER_API_KEY_ADDRESS": POLYMARKET_API_KEY_ADDRESS,
+            },
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=10) as r:
+            resp = json.loads(r.read())
+        order["status"] = "filled" if resp.get("success") else "submitted"
         order["exchange_response"] = str(resp)[:200]
     except Exception as e:
         order["status"] = "error"

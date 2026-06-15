@@ -9,8 +9,10 @@ if _env.exists():
             _k, _v = _line.split("=", 1)
             os.environ.setdefault(_k.strip(), _v.strip())
 
-# Polymarket API (geradas no app após KYC)
-POLYMARKET_API_KEY    = os.getenv("POLYMARKET_API_KEY", "")
+# Polymarket Relayer API (geradas em Settings → Chaves API do Relayer)
+POLYMARKET_API_KEY         = os.getenv("POLYMARKET_API_KEY", "")
+POLYMARKET_API_KEY_ADDRESS = os.getenv("POLYMARKET_API_KEY_ADDRESS", "")
+# Mantidos para compatibilidade mas não obrigatórios no Relayer
 POLYMARKET_API_SECRET = os.getenv("POLYMARKET_API_SECRET", "")
 POLYMARKET_PASSPHRASE = os.getenv("POLYMARKET_PASSPHRASE", "")
 WALLET_PRIVATE_KEY    = os.getenv("WALLET_PRIVATE_KEY", "")

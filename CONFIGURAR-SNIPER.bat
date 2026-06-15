@@ -12,20 +12,16 @@ echo  4. API Keys geradas em: polymarket.com/settings/api
 echo.
 echo ============================================
 
-set /p POLY_KEY="Cole sua POLYMARKET_API_KEY: "
-set /p POLY_SECRET="Cole sua POLYMARKET_API_SECRET: "
-set /p POLY_PASS="Cole sua POLYMARKET_PASSPHRASE: "
-set /p WALLET="Cole sua WALLET_PRIVATE_KEY (chave privada MetaMask): "
-set /p ANTHROPIC="Cole sua ANTHROPIC_API_KEY (opcional, para analise Claude): "
+set /p POLY_KEY="Cole sua Chave API (019ec8bd...): "
+set /p POLY_ADDR="Cole seu Endereco (0x1dc3b...): "
+set /p ANTHROPIC="Cole sua ANTHROPIC_API_KEY (opcional): "
 
 echo.
 echo Salvando configuracao...
 
 (
 echo POLYMARKET_API_KEY=%POLY_KEY%
-echo POLYMARKET_API_SECRET=%POLY_SECRET%
-echo POLYMARKET_PASSPHRASE=%POLY_PASS%
-echo WALLET_PRIVATE_KEY=%WALLET%
+echo POLYMARKET_API_KEY_ADDRESS=%POLY_ADDR%
 echo ANTHROPIC_API_KEY=%ANTHROPIC%
 echo EXECUTION_MODE=live
 ) > "%~dp0src\polymarket-sniper\.env"
