@@ -4,30 +4,38 @@ echo ============================================
 echo  CONFIGURAR CHAVES DO SNIPER
 echo ============================================
 echo.
-echo Voce precisara de:
-echo  1. API KEY    — polymarket.com/settings ^> Chaves API
-echo  2. ENDERECO   — o mesmo (0x...)
-echo  3. PRIVATE KEY — MetaMask ^> Conta ^> Exportar chave privada
+echo Para obter as chaves acesse:
+echo  polymarket.com/settings ^> Chaves API do Relayer
 echo.
 echo ============================================
-echo  AVISO DE SEGURANCA — LEIA COM ATENCAO
-echo ============================================
-echo.
-echo A chave privada (private key) da MetaMask da acesso
-echo TOTAL a todos os fundos dessa carteira.
-echo.
-echo  - Use UMA CARTEIRA SEPARADA so para o bot
-echo  - Coloque APENAS o valor que aceita perder
-echo  - NUNCA compartilhe o arquivo .env com ninguem
-echo  - O arquivo fica em: src\polymarket-sniper\.env
-echo.
-echo ============================================
-echo.
 
-set /p POLY_KEY="1. Cole sua API KEY (019ec8bd...): "
-set /p POLY_ADDR="2. Cole seu ENDERECO (0x...): "
-set /p PRIV_KEY="3. Cole sua PRIVATE KEY da MetaMask (0x...): "
-set /p ANTHROPIC="4. ANTHROPIC_API_KEY (opcional, Enter pula): "
+set /p POLY_KEY="API KEY (019ec8bd...): "
+set /p POLY_ADDR="ENDERECO (0x1dc3b...): "
+
+echo.
+echo ============================================
+echo  MODO DE EXECUCAO
+echo ============================================
+echo.
+echo  [1] ALERT   — Avisa oportunidades, voce executa manualmente no site
+echo  [2] DRY RUN — Simula trades sem dinheiro real (para testar)
+echo  [3] LIVE    — Executa ordens reais (requer WALLET_PRIVATE_KEY)
+echo.
+set /p MODO="Escolha 1, 2 ou 3: "
+
+if "%MODO%"=="1" set EXEC_MODE=alert
+if "%MODO%"=="2" set EXEC_MODE=dry_run
+if "%MODO%"=="3" (
+    set EXEC_MODE=live
+    echo.
+    echo Para LIVE voce precisa da Private Key da MetaMask.
+    echo MetaMask ^> Conta ^> ... ^> Account Details ^> Export Private Key
+    echo.
+    set /p PRIV_KEY="PRIVATE KEY da MetaMask (0x... ou deixe vazio): "
+)
+
+set /p ANTHROPIC="ANTHROPIC_API_KEY (opcional, Enter pula): "
+set /p WEBHOOK="WEBHOOK_URL Discord/Slack (opcional, Enter pula): "
 
 echo.
 echo Salvando configuracao...
@@ -37,16 +45,17 @@ echo POLYMARKET_API_KEY=%POLY_KEY%
 echo POLYMARKET_API_KEY_ADDRESS=%POLY_ADDR%
 echo WALLET_PRIVATE_KEY=%PRIV_KEY%
 echo ANTHROPIC_API_KEY=%ANTHROPIC%
-echo EXECUTION_MODE=live
+echo WEBHOOK_URL=%WEBHOOK%
+echo EXECUTION_MODE=%EXEC_MODE%
 ) > "%~dp0src\polymarket-sniper\.env"
 
 echo.
-echo [OK] Configuracao salva em src\polymarket-sniper\.env
+echo [OK] Configuracao salva — Modo: %EXEC_MODE%
 echo.
-echo NUNCA compartilhe este arquivo ou a private key!
+if "%MODO%"=="1" (
+    echo No modo ALERT o bot avisa no terminal quando ha oportunidade.
+    echo Voce acessa polymarket.com e executa manualmente.
+)
 echo.
-echo Proximo passo:
-echo   pip install py-clob-client
-echo   python src\polymarket-sniper\dashboard.py
-echo.
+echo Para iniciar: RODAR-LIVE.bat
 pause
